@@ -1,5 +1,6 @@
 import { Markup, Telegraf } from "telegraf";
 import { config } from "dotenv";
+import { Keypair } from "@solana/web3.js";
 config();
 
 const token = process.env.BOT_TOKEN;
@@ -7,6 +8,8 @@ if(!token) throw new Error("Bot Token not found .env");
 console.log("TOKEN =", process.env.BOT_TOKEN);
 
 const bot = new Telegraf(token);
+
+const USERS: Record<string, Keypair> = {}
 
 const keyboard = Markup.inlineKeyboard([
     [
@@ -29,6 +32,14 @@ bot.start(async(ctx) => {
 
 bot.action("generate_wallet", (ctx) => {
     ctx.answerCbQuery("Generating Wallet....");
+    const keypair = Keypair.generate()
+    const userId = ctx.from?.id;
+    if(userId) USERS[userId] = keypair;
+
+    ctx.sendMessage(`New wallet created for you with a public key ${keypair.publicKey.toBase58()}`, {
+        parse_mode: "Markdown",
+        ...keyboard
+    });
 })
 
 
