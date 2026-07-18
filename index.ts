@@ -18,6 +18,13 @@ const keyboard = Markup.inlineKeyboard([
     ],
 ])
 
+
+const generate_wallet_keyboard = Markup.inlineKeyboard([
+    [
+        Markup.button.callback(' 🔑 Generate new wallets', 'generate_wallet'),
+    ],
+])
+
 bot.start(async(ctx) => {
     const userid = ctx.from?.id;
     if(!userid) return;
@@ -46,6 +53,21 @@ bot.action("generate_wallet", (ctx) => {
 
 bot.action("view_address", (ctx) => {
     ctx.answerCbQuery("Showing your address");
+    const userId = ctx.from?.id;
+    const keypair =  USERS[userId];
+
+if(!keypair) {
+    ctx.sendMessage("We dont have you wallet so create one here👇", {
+        parse_mode: "Markdown",
+        ...generate_wallet_keyboard
+    });
+    return;
+}
+
+   ctx.sendMessage(`Here is your public key ${keypair.publicKey.toBase58()}`, {
+        parse_mode: "Markdown",
+        ...keyboard
+    });
 })
 
 await bot.launch();
