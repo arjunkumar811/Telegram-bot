@@ -1,6 +1,7 @@
 import { Markup, Telegraf } from "telegraf";
 import { config } from "dotenv";
 import { Keypair } from "@solana/web3.js";
+import { message } from "telegraf/filters";
 config();
 
 const token = process.env.BOT_TOKEN;
@@ -84,5 +85,11 @@ bot.action("send_sol", (ctx) => {
     ctx.answerCbQuery()
     ctx.sendMessage("Can you Share the address to send to")
 });
+
+
+bot.on(message("text"), (ctx) => {
+    ctx.message.text
+})
+
 
 await bot.launch();
