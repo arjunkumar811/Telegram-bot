@@ -25,6 +25,14 @@ const generate_wallet_keyboard = Markup.inlineKeyboard([
     ],
 ])
 
+
+const postWalletCreationKeyboard = Markup.inlineKeyboard([
+    [
+        Markup.button.callback(' 🔑 Send a SOL', 'send_sol'),
+        Markup.button.callback(' 👁️ View Address ', 'view_address'),
+    ],
+])
+
 bot.start(async(ctx) => {
     const userid = ctx.from?.id;
     if(!userid) return;
@@ -45,7 +53,7 @@ bot.action("generate_wallet", (ctx) => {
 
     ctx.sendMessage(`New wallet created for you with a public key ${keypair.publicKey.toBase58()}`, {
         parse_mode: "Markdown",
-        ...keyboard
+        ...postWalletCreationKeyboard
     });
 })
 
@@ -66,8 +74,15 @@ if(!keypair) {
 
    ctx.sendMessage(`Here is your public key ${keypair.publicKey.toBase58()}`, {
         parse_mode: "Markdown",
-        ...keyboard
+        ...postWalletCreationKeyboard
     });
 })
+
+
+
+bot.action("send_sol", (ctx) => {
+    ctx.answerCbQuery()
+    ctx.sendMessage("Can you Share the address to send to")
+});
 
 await bot.launch();
